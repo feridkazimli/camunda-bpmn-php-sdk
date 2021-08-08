@@ -24,7 +24,7 @@ class App
      *
      * @var string
      */
-    public $apiUrl  = 'http://localhost:8080/engine-rest';
+    public $apiUrl  = 'http://localhost:8080/engine-rest/';
     /**
      * Process object
      *
@@ -43,13 +43,13 @@ class App
      * @param  string $apiUrl
      * @return void
      */
-    public function __construct(string $apiUrl = '')
+    public function __construct(string $apiUrl = NULL)
     {
         if (!is_null($apiUrl)) {
             $this->apiUrl = $apiUrl;
         }
 
-        $this->processDefination      = new ProcessDefinationServices();
+        $this->processDefination = new ProcessDefinationServices($this->apiUrl);
         // $this->externelTask = new ExternelTaskServices();
     }
 }

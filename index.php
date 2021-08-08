@@ -10,14 +10,14 @@ class Action
     {
         $this->app = new App();
         $this->app->processDefination->startProcess([
-            'key' => 'sms',
-            'tenantId' => 'sms'
+            'key' => 'sms-mail',
+            'tenant-id' => 'sms'
         ], function () {
             $request = new ProcessRequest();
-            $request->setBusinessKey('sms_');
-            $request->setWithVariablesInReturn(true);
+            $request->setBusinessKey('tesy');
             $request->setVariable('Test', 'test');
             $request->setVariable('Test2', 'test 2');
+            $request->setWithVariablesInReturn(true);
 
             return $request;
         }); 
