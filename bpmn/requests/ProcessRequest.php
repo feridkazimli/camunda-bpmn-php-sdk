@@ -51,9 +51,9 @@ class ProcessRequest extends IteratorRequest
     protected $skipCustomListeners;
     protected $skipIoMappings;
 
-    public function setBusinessKey(string|int $business_key)
+    public function setBusinessKey($prefix)
     {
-        $this->businessKey = $business_key;
+        $this->businessKey = uniqid($prefix);
         return $this;
     }
 

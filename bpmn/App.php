@@ -3,12 +3,16 @@ declare(strict_types=1);
 
 namespace App\Bpmn;
 
+use App\Bpmn\Services\ExternelTaskServices;
 use App\Bpmn\Services\ProcessDefinationServices;
 
+require 'bpmn/helpers/Response.php';
 require 'bpmn/helpers/RequestApi.php';
 require 'bpmn/requests/IteratorRequest.php';
 require 'bpmn/requests/ProcessRequest.php';
+require 'bpmn/requests/ExternalTaskRequest.php';
 require 'bpmn/services/ProcessDefinationServices.php';
+require 'bpmn/services/ExternelTaskServices.php';
 /**
  * App class
  * @category App_Class
@@ -50,7 +54,7 @@ class App
         }
 
         $this->processDefination = new ProcessDefinationServices($this->apiUrl);
-        // $this->externelTask = new ExternelTaskServices();
+        $this->externelTask = new ExternelTaskServices($this->apiUrl);
     }
 }
 
