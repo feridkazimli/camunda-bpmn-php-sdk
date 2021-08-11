@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bpmn\Helpers;
+namespace Bpmn\Helpers;
 
 class Response
 {

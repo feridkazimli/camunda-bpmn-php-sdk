@@ -1,9 +1,8 @@
 <?php
 declare(strict_types=1);
 
-use App\Bpmn\App;
-use App\Bpmn\Helpers\Response;
-use App\Bpmn\Requests\ExternelTaskRequest;
+use Bpmn\App;
+use Bpmn\Requests\ExternalTaskRequest;
 
 class sendSmsApi 
 {
@@ -14,7 +13,7 @@ class sendSmsApi
 
     public function execute($task)
     {
-        $request = new ExternelTaskRequest();
+        $request = new ExternalTaskRequest();
 
         $task = $this->app->externelTask->fetchAndLock(function () use ($task, $request)
         {

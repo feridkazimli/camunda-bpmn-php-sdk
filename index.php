@@ -1,10 +1,9 @@
 <?php
 
-use App\Bpmn\App;
-use App\Bpmn\Helpers\Response;
-use App\Bpmn\Requests\ProcessRequest;
-require 'bpmn/App.php';
-
+use Bpmn\App;
+use Bpmn\Requests\ProcessRequest;
+// require 'bpmn/App.php';
+require './vendor/autoload.php';
 class Action
 {
     public function __construct()

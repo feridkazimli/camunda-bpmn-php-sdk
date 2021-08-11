@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Bpmn\Requests;
+namespace Bpmn\Requests;
 
-use App\Bpmn\Requests\IteratorRequest;
+use Bpmn\Requests\IteratorRequest;
 
 class ProcessRequest extends IteratorRequest
 {

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
-namespace App\Bpmn\Services;
+namespace Bpmn\Services;
 
-use App\Bpmn\Helpers\Response;
-use App\Bpmn\Helpers\RequestApi;
+use Bpmn\Helpers\Response;
+use Bpmn\Helpers\RequestApi;
 
 /**
  * Undocumented class
