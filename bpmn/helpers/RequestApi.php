@@ -26,6 +26,7 @@ class RequestApi {
                 ->co_followlocation(1)
                 ->co_httpheader($header_body);
 
+            
         $response = $reqeustapi->run();
         return $response;
     }
@@ -41,15 +42,21 @@ class RequestApi {
                 ->co_followlocation(1)
                 ->co_httpheader($header_body);
 
-        $response = $reqeustapi->run();
+        $response = $reqeustapi->run($body);
         return $response;
     }
 
     protected function run()
     {
         $response = curl_exec($this->ch);
+        $code = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
         curl_close($this->ch);
-        $result = json_decode($response, TRUE);
+        
+        $result = [
+            'code' => $code,
+            'body' => json_decode($response, TRUE)
+        ];
+
         return $result;
     }
 
@@ -94,6 +101,21 @@ class RequestApi {
         return $this;
     }
 
+    protected function co_nobody($bool)
+    {
+        $this->set = curl_setopt($this->ch, CURLOPT_NOBODY, $bool);
+        return $this;
+    }
+
+    protected function co_headerfunc()
+    {
+        $this->set = curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($ch, $header) {
+            return $header;
+        });
+
+        return $this;
+    }
+
     protected function co_postfields(array $data, $type = 'json')
     {
         $this->set = curl_setopt($this->ch, CURLOPT_POSTFIELDS, $this->parsedata($data, $type));
@@ -109,6 +131,12 @@ class RequestApi {
     protected function co_followlocation($bool)
     {
         $this->set = curl_setopt($this->ch, CURLOPT_FOLLOWLOCATION, $bool);
+        return $this;
+    }
+
+    protected function co_responeheader($bool)
+    {
+        $this->set = curl_setopt($this->ch, CURLOPT_HEADER, $bool);
         return $this;
     }
 

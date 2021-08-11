@@ -4,6 +4,7 @@ namespace App\Bpmn\Services;
 
 use App\Bpmn\Helpers\Response;
 use App\Bpmn\Helpers\RequestApi;
+use App\Bpmn\Services\HistoryServices;
 
 /**
  * Undocumented class
@@ -19,87 +20,75 @@ class ExternelTaskServices extends RequestApi
 
     public function getExternalTask($process)
     {
-        if(array_key_exists('type', $process) || !array_key_exists('id', $process))
-        {
-            echo json_encode($process);
-            return false;
-        }
-
         $task = static::get(
-                    $this->url('external-task?processInstanceId=' . $process['id'])
+                    $this->url('external-task?processInstanceId=' . $process['body']['id'])
                 );
-        
-        if(count($task) > 0)
-        {
-            $classPath = 'Tasks/' . $task[0]['topicName'] . '.php'; 
-            require $classPath;
-            $class = new $task[0]['topicName'];
-            $return = $class->execute($task);
-            
-            if (!is_null($return) && $return == 'success') 
-            {
-                return Response::setSuccess([
-                    'status' => 'error',
-                    'body' => $task
-                ]);
-            }
 
-            $this->getExternalTask($process);
+        if($task['code'] == 200 && count($task['body']) > 0)
+        {
+            $classPath = 'Tasks/' . $task['body'][0]['topicName'] . '.php'; 
+            if(file_exists($classPath) && is_file($classPath))
+            {
+                require $classPath;
+                $class = new $task['body'][0]['topicName'];
+                $return = $class->execute($task['body']);
+                
+                if ($return['code'] != 200) {
+                    // return $return;
+                    $history = new HistoryServices($this->apiUrl);
+                    return $history->finishProcess($process['body']['id']);
+                }
+                elseif (array_key_exists('status', $return)) 
+                {
+                    return $return;
+                }
+                elseif($return['code'] == 200)
+                {
+                    return $this->getExternalTask($process);
+                }
+                else
+                {
+                    return $return;
+                }
+            }
         }
         else
         {
-            return false;
+            return $task;
         }
-    }
-
-    public function subscribe($topicName, $callable)
-    {
-        return $callable();
     }
 
     public function fetchAndLock($callable)
     {
+        // print_r($callable()); die;
         $lockTask = static::post(
             $this->url('external-task/fetchAndLock'),
             $callable(),
             array('Content-Type:application/json', 'Accept:application/json')
         );
 
-        if (array_key_exists('type', $lockTask))
-        {
-            return Response::setError([
-                'status' => 'error',
-                'body' => $lockTask
-            ]);
-        }
-        else
-        {
-            return Response::setSuccess([
-                'status' => 'success',
-                'body'   => $lockTask
-            ]);
-        }
+        return $lockTask;
     }
 
     public function complete($id, $callable)
-    {
+    {        
         $complete = static::post(
             $this->url('external-task/'.$id.'/complete'),
             $callable(),
             array('Content-Type:application/json', 'Accept:application/json')
         );
 
-        if (isset($complete['type']) && !is_null($complete))
-        {
-            return Response::setError([
-                'status' => 'error',
-                'body' => $complete
-            ]);
-        }
-        else
-        {
-            return $complete;
-        }
+
+        return $complete;
+    }
+
+    public function getTaskVariable($var_name)
+    {
+        $variable = $this->get(
+            $this->url('variable-instance?variableName=' . $var_name)
+        );
+
+        return $variable;
     }
 
     protected function url($path)

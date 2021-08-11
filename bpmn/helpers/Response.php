@@ -7,6 +7,7 @@ class Response
 {
     protected static $error = [];
     protected static $success = [];
+    protected static $data = [];
 
     public static function setError($error_body)
     {
@@ -18,6 +19,18 @@ class Response
     {
         static::$success = $body;
         return static::$success;
+    }
+
+    public static function getData()
+    {
+        if (count(static::$error) > 0) {
+            return static::$error;
+        }
+        else
+        {
+            return static::$success;
+            // echo json_encode(static::$success);
+        }
     }
 
     public static function getError()
