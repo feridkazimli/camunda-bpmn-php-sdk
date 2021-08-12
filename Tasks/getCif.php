@@ -32,7 +32,7 @@ class getCif
             return $request->iterate();
         });
 
-        $app = true;
+        $app = false;
 
         if($app && $task['code'] == 200)
         {

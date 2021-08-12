@@ -1,16 +1,21 @@
 {
     "name": "bpmn/camunda-bpmn-php-sdk",
+    "version": "1.0.0",
     "description": "camunda rest api services used php\u001b[D",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Kazimzada Farid Tahir",
-            "email": "faridkt@bankrespublika.az"
+            "email": "ferid.kazimli@gmail.com"
         }
     ],
-    "require": {},
-
+    "support": {
+        "email": "ferid.kazimli@gmail.com"
+    },
+    "require": {
+        "php": ">=7.0"
+    },
     "autoload": {
         "psr-4": {
             "Bpmn\\": "bpmn"
