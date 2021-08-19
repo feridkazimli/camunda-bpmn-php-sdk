@@ -2,13 +2,15 @@
 
 use Bpmn\App;
 use Bpmn\Requests\ProcessRequest;
+use Bpmn\Responses\ProcessResponse;
+
 // require 'bpmn/App.php';
 require './vendor/autoload.php';
 class Action
 {
     public function __construct()
     {
-        $this->app = new App();
+        $this->app = new App('http://camunda-platform.service.consul/engine-rest/');
         $process = $this->app->processDefination->startProcess([
             'key' => 'sms-mail',
             'tenant-id' => 'send-sms'
@@ -19,10 +21,11 @@ class Action
             // $request->setVariable('Test2', 'test 2');
             $request->setWithVariablesInReturn(true);
 
-            return $request;
+            return $request->iterate();
         }); 
 
-        if ($process['code'] == 200) {
+        if ($process->code == null) {
+            $this->app->externelTask->setPath('Tasks');
             $task = $this->app->externelTask->getExternalTask($process);
             echo json_encode($task);
         }

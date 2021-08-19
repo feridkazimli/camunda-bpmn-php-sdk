@@ -28,8 +28,8 @@ class ProcessInstanceServices extends RequestApi
             'status' => 'error',
             'body' => [
                 'id' => $task[0]['processInstanceId'],
-                'errorCode' => $processVariable['body']['value'],
-                'valueInfo' => $processVariable['body']['valueInfo']
+                'errorCode' => $processVariable['value'],
+                'valueInfo' => $processVariable['valueInfo']
             ]
         ];
 
