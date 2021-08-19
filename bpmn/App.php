@@ -32,7 +32,7 @@ class App
      *
      * @var string
      */
-    public $apiUrl  = 'http://localhost:8080/engine-rest/';
+    public $apiUrl  = 'http://camunda-platform.service.consul/engine-rest/';
     /**
      * Process object
      *

@@ -49,14 +49,11 @@ class RequestApi {
     protected function run()
     {
         $response = curl_exec($this->ch);
-        $code = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
+        // $code = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
         curl_close($this->ch);
         
-        $result = [
-            'code' => $code,
-            'body' => json_decode($response, TRUE)
-        ];
-
+        $result = json_decode($response, TRUE);
+        // $result['code'] = $code;
         return $result;
     }
 
@@ -107,12 +104,9 @@ class RequestApi {
         return $this;
     }
 
-    protected function co_headerfunc()
+    protected function co_header($bool)
     {
-        $this->set = curl_setopt($this->ch, CURLOPT_HEADERFUNCTION, function($ch, $header) {
-            return $header;
-        });
-
+        $this->set = curl_setopt($this->ch, CURLOPT_HEADER, $bool);
         return $this;
     }
 
