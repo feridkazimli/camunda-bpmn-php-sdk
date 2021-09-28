@@ -38,7 +38,7 @@ class ExternalTaskRequest extends IteratorRequest
         return $this->sorting;
     }
 
-    public function setWorkerId($prefix_or_id, $change_id = true)
+    public function setWorkerId($prefix_or_id = 'RA_', $change_id = true)
     {
         if ($change_id) 
         {

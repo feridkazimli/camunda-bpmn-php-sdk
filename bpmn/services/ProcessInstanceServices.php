@@ -3,7 +3,7 @@ declare(strict_types=1);
 namespace Bpmn\Services;
 
 use Bpmn\Helpers\RequestApi;
-use Bpmn\Helpers\Response;
+use Bpmn\Responses\ProcessInstanceResponse;
 
 /**
  * Undocumented class
@@ -15,25 +15,17 @@ class ProcessInstanceServices extends RequestApi
     public function __construct($apiUrl)
     {
         $this->apiUrl = $apiUrl;
+        $this->processInstanceResponse = new ProcessInstanceResponse();
     }
 
     public function getProcessVariable($task, $var_name)
     {
         $processVariable = static::get(
-            $this->url('process-instance/'.$task[0]['processInstanceId'].'/variables/'.$var_name.'?deserializeValue=true')
+            $this->url('process-instance/'.$task->processInstanceId.'/variables/'.$var_name.'?deserializeValue=true')
         );
 
-        $data = [
-            'code' => $processVariable['code'],
-            'status' => 'error',
-            'body' => [
-                'id' => $task[0]['processInstanceId'],
-                'errorCode' => $processVariable['value'],
-                'valueInfo' => $processVariable['valueInfo']
-            ]
-        ];
-
-        return $data;
+        $processVariable['id'] = $task->processInstanceId; 
+        return $this->processInstanceResponse->cast($this->processInstanceResponse, $processVariable);
     }
 
     protected function url($path)

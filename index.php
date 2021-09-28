@@ -5,6 +5,8 @@ use Bpmn\Requests\ProcessRequest;
 use Bpmn\Responses\ProcessResponse;
 
 // require 'bpmn/App.php';
+require './Tasks/getCif.php';
+require './Tasks/sendSmsApi.php';
 require './vendor/autoload.php';
 class Action
 {
@@ -18,21 +20,14 @@ class Action
             $request = new ProcessRequest();
             $request->setBusinessKey('bpmn_run_');
             // $request->setVariable('Test', 'test');
-            // $request->setVariable('Test2', 'test 2');
             $request->setWithVariablesInReturn(true);
 
             return $request->iterate();
         }); 
 
-        if ($process->code == null) {
-            $this->app->externelTask->setPath('Tasks');
-            $task = $this->app->externelTask->getExternalTask($process);
-            echo json_encode($task);
-        }
-        else
-        {
-            echo json_encode($process);
-        }
+        $this->app->externelTask->setPath('Tasks');
+        $this->app->externelTask->getExternalTask($process);
+        // return $task;
     }
 }
 
