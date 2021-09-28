@@ -1,7 +1,7 @@
 {
     "name": "bpmn/camunda-bpmn-php-sdk",
-    "version": "1.0.0",
-    "description": "camunda rest api services used php\u001b[D",
+    "version": "1.2.0",
+    "description": "camunda rest api services used php",
     "type": "library",
     "license": "MIT",
     "authors": [
