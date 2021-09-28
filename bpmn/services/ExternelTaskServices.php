@@ -29,38 +29,25 @@ class ExternelTaskServices extends RequestApi
         $this->path = $path;
         return $this;
     }
-
     public function getExternalTask(ProcessResponse $process)
     {
         $task = static::get(
                     $this->url('external-task?processInstanceId=' . $process->id)
                 );
 
-        if(count($task) > 0)
+        if ($task['code'] == 200 && isset($task[0]['topicName'])) 
         {
             $classPath = $this->path . '/' . $task[0]['topicName'] . '.php'; 
             if(file_exists($classPath) && is_file($classPath))
             {
-                require $classPath;
-                $class = new $task[0]['topicName'];
-                $return = $class->execute($task);
-                if ($return->code == 'success') {
-                    $history = new HistoryServices($this->apiUrl);
-                    return $history->finishProcess($process->id);
-                }
-                elseif (array_key_exists('status', $return)) 
-                {
-                    return $return;
-                }
-                elseif($return->code == null)
-                {
-                    return $this->getExternalTask($process);
-                }
-                else
-                {
-                    return $return;
-                }
+                $execute = new $task[0]['topicName'];
+                call_user_func_array([$execute, 'execute'], [$task, new ExternalTaskRequest()]);
             }
+            else
+            {
+                return false;
+            }
+            return $this->getExternalTask($process);
         }
     }
 

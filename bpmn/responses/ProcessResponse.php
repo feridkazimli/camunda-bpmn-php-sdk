@@ -10,6 +10,8 @@ class ProcessResponse extends Iterator
     public $code;
     public $id;
     public $variables;
+    public $type;
+    public $message;
     protected $definitionId;
     protected $businessKey;
     protected $caseInstanceId;

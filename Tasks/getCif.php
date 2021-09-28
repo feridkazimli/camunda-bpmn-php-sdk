@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 use Bpmn\App;
 use Bpmn\Requests\ExternalTaskRequest;
-use Bpmn\Responses\ExternelTaskResponse;
 
 class getCif 
 {
@@ -12,10 +11,8 @@ class getCif
         $this->app = new App('http://camunda-platform.service.consul/engine-rest/');
     }
 
-    public function execute($task)
+    public function execute($task, ExternalTaskRequest $request)
     {
-        $request = new ExternalTaskRequest();
-
         $ltask = $this->app->externelTask->fetchAndLock(function () use ($task, $request)
         {
             $request->setWorkerId('cif_')
@@ -33,9 +30,9 @@ class getCif
             return $request->iterate();
         });
 
-        $app = true;
+        $app = false;
 
-        if($app && $ltask->code == null)
+        if($app)
         {
             $this->app->externelTask->complete($ltask->id, 
                 function () use ($ltask, $request) {
@@ -46,27 +43,21 @@ class getCif
                     
                 return $request->iterate();
             });
-
-            return $ltask;
         }
-        elseif($ltask->code == null && !$app)
+        else
         {
             $this->app->externelTask->complete($ltask->id, 
-            function () use ($ltask, $request) {
-                $request->setWorkerId($ltask->workerId, false)
-                        ->setVariable('responseGetCustomerInfoFromGni', 'Error');
+                function () use ($ltask, $request) {
+                    $request->setWorkerId($ltask->workerId, false)
+                            ->setVariable('responseGetCustomerInfoFromGni', 'Error');
                 
                 return $request->iterate();
             }); 
 
-            $var = $this->app->processInstance->getProcessVariable($ltask, 
-                                                                'globalError');
+            $var = $this->app->processInstance->getProcessVariable($ltask, 'globalError');
 
-            return $var;
-        }
-        else
-        {
-            return $ltask;
+            echo json_encode($var);
+            return false;
         }
     }
 }

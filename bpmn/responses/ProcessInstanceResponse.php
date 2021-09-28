@@ -5,30 +5,20 @@ namespace Bpmn\Responses;
 
 use Bpmn\Helpers\Iterator;
 
-class ExternelTaskResponse extends Iterator
+class ProcessInstanceResponse extends Iterator
 {
     public $code;
     public $id;
-    public $processDefinitionId;
-    public $processInstanceId;
-    public $variables;
-    protected $definitionId;
-    protected $errorMessage;
-    protected $errorDetails;
-    protected $executionId;
-    protected $activityId;
-    protected $activityInstanceId;
-    protected $processDefinitionKey;
-    protected $retries;
-    protected $suspended;
-    protected $topicName;
-    protected $workerId;
-    protected $tenantId;
-    protected $priority;
-    protected $businessKey;
-    protected $extensionProperties;
+    public $value;
+    // public $variables;
+    // public $message;
     protected $type;
-    protected $message;
+    protected $definitionId;
+    protected $businessKey;
+    protected $caseInstanceId;
+    protected $ended;
+    protected $suspended;
+    protected $tenantId;
 
     public function __set($isim, $değer)
     {
@@ -38,7 +28,7 @@ class ExternelTaskResponse extends Iterator
 
     public function __get($isim)
     {
-        if ($this->$isim) {
+        if (!is_null($this->$isim)) {
             return $this->$isim;
         }
 
