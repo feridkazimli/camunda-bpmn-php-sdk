@@ -18,15 +18,21 @@ class ProcessDefinationServices extends RequestApi
         $this->processResponse = new ProcessResponse();
     }
 
-    public function startProcess($config, $callable) : ProcessResponse
+    public function startProcess($config, $callable)
     {
         $url = $this->url('process-definition/key/'.$config['key'].'/tenant-id/'.$config['tenant-id'].'/start');
         $data = static::post($url, $callable(), 
                             ['Content-Type:application/json',
                              'Accept:application/json'
                             ]);
-        
-        return $this->processResponse->cast($this->processResponse, $data);
+        if($data['code'] == 200)
+        {
+            return $this->processResponse->cast($this->processResponse, $data);
+        }
+        else
+        {
+            trigger_error(json_encode($data), E_USER_ERROR);
+        }
     }
 
     protected function url($path)

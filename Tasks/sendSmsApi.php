@@ -11,10 +11,8 @@ class sendSmsApi
         $this->app = new App('http://camunda-platform.service.consul/engine-rest/');
     }
 
-    public function execute($task)
+    public function execute($task, ExternalTaskRequest $request)
     {
-        $request = new ExternalTaskRequest();
-
         $ltask = $this->app->externelTask->fetchAndLock(function () use ($task, $request)
         {
             $request->setWorkerId('cif_')
@@ -32,9 +30,9 @@ class sendSmsApi
             return $request->iterate();
         });
 
-        $app = true;
+        $app = false;
 
-        if($app && $ltask->code == null)
+        if($app)
         {
             $this->app->externelTask->complete($ltask->id, 
                 function () use ($ltask, $request) {
@@ -43,10 +41,10 @@ class sendSmsApi
                     
                 return $request->iterate();
             });
-            $ltask->code = 'success';
-            return $ltask;
+            echo json_encode($ltask);
+            return false;
         }
-        elseif($ltask->code == null && !$app)
+        else
         {
             $this->app->externelTask->complete($ltask->id, 
                 function () use ($ltask, $request) {
@@ -59,11 +57,8 @@ class sendSmsApi
             $var = $this->app->processInstance->getProcessVariable($ltask, 
                                                                 'globalError');
 
-            return $var;
-        }
-        else
-        {
-            return $ltask;
+            echo json_encode($var);
+            return false;
         }
     }
 }
