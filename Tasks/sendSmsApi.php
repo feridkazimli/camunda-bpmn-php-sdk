@@ -4,11 +4,11 @@ declare(strict_types=1);
 use Bpmn\App;
 use Bpmn\Requests\ExternalTaskRequest;
 
-class sendSmsApi 
+class sendSmsApi extends App
 {
     public function __construct()
     {
-        $this->app = new App('http://camunda-platform.service.consul/engine-rest/');
+        parent::__construct();
     }
 
     public function execute($task, ExternalTaskRequest $request)

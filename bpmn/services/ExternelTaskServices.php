@@ -4,7 +4,6 @@ namespace Bpmn\Services;
 
 use Closure;
 use Bpmn\Helpers\RequestApi;
-use Bpmn\Services\HistoryServices;
 use Bpmn\Responses\ProcessResponse;
 use Bpmn\Requests\ExternalTaskRequest;
 use Bpmn\Responses\ExternelTaskResponse;
@@ -14,6 +13,7 @@ use Bpmn\Responses\ExternelTaskResponse;
  */
 class ExternelTaskServices extends RequestApi
 {
+    protected $task;
     protected $apiUrl;
     protected $path;
     protected $externelTaskResponse;
@@ -22,6 +22,7 @@ class ExternelTaskServices extends RequestApi
     {
         $this->apiUrl = $apiUrl;
         $this->externelTaskResponse = new ExternelTaskResponse();
+        $this->request  = new ExternalTaskRequest();
     }
 
     public function setPath($path)
@@ -34,14 +35,17 @@ class ExternelTaskServices extends RequestApi
         $task = static::get(
                     $this->url('external-task?processInstanceId=' . $process->id)
                 );
-
+        
         if ($task['code'] == 200 && isset($task[0]['topicName'])) 
         {
             $classPath = $this->path . '/' . $task[0]['topicName'] . '.php'; 
             if(file_exists($classPath) && is_file($classPath))
             {
-                $execute = new $task[0]['topicName'];
-                call_user_func_array([$execute, 'execute'], [$task, new ExternalTaskRequest()]);
+                if(class_exists($task[0]['topicName']))
+                {
+                    $execute = new $task[0]['topicName'];
+                    call_user_func_array([$execute, 'execute'], [$task, new ExternalTaskRequest()]);
+                }
             }
             else
             {
@@ -51,32 +55,49 @@ class ExternelTaskServices extends RequestApi
         }
     }
 
-    public function fetchAndLock($callable) : ExternelTaskResponse
+    public function fetchAndLock($task) : ExternelTaskResponse
     {
         $lockTask = static::post(
             $this->url('external-task/fetchAndLock'),
-            $callable(),
+            $this->setLockData($task),
             array('Content-Type:application/json', 'Accept:application/json')
         );
 
         return $this->externelTaskResponse->cast($this->externelTaskResponse, $lockTask);
     }
 
-    public function complete($id, $request)
+    protected function setLockData($task)
+    {
+        $this->request->setWorkerId('truva_')
+                    ->setMaxTasks(1)
+                    ->setUsePriority(true)
+                    ->setTopics([
+                        'topicName' => $task[0]['topicName'],
+                        'lockDuration' => 500,
+                        'processDefinitionId' => $task[0]['processDefinitionId'], 
+                        'processDefinitionKey' => $task[0]['processDefinitionKey'], 
+                        'processInstanceId' => $task[0]['processInstanceId'], 
+                        'businessKey' => $task[0]['businessKey']
+                    ]);
+        
+        return $this->request->iterate();
+    }
+
+    public function complete($id, Closure $request)
     {   
         $complete = static::post(
             $this->url('external-task/'.$id.'/complete'),
-            $request(),
+            $request->call($this, $this->request),
             array('Content-Type:application/json', 'Accept:application/json')
         );
 
         return $complete;
     }
 
-    public function getTaskVariable($var_name)
+    public function getTaskVariable($task, $var_name)
     {
         $variable = $this->get(
-            $this->url('variable-instance?variableName=' . $var_name)
+            $this->url('process-instance/'.$task->processInstanceId.'/variables/' . $var_name)
         );
 
         return $variable;

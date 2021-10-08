@@ -5,14 +5,14 @@ use Bpmn\Requests\ProcessRequest;
 use Bpmn\Responses\ProcessResponse;
 
 // require 'bpmn/App.php';
-require './Tasks/getCif.php';
-require './Tasks/sendSmsApi.php';
 require './vendor/autoload.php';
+require './Tasks/sendSmsApi.php';
+require './Tasks/getCif.php';
 class Action
 {
     public function __construct()
     {
-        $this->app = new App('http://camunda-platform.service.consul/engine-rest/');
+        $this->app = new App();
         $process = $this->app->processDefination->startProcess([
             'key' => 'sms-mail',
             'tenant-id' => 'send-sms'

@@ -3,10 +3,12 @@ declare(strict_types=1);
 
 namespace Bpmn;
 
+use stdClass;
 use Bpmn\Services\HistoryServices;
+use Bpmn\Services\VariablesServices;
 use Bpmn\Services\ExternelTaskServices;
-use Bpmn\Services\ProcessDefinationServices;
 use Bpmn\Services\ProcessInstanceServices;
+use Bpmn\Services\ProcessDefinationServices;
 
 // require 'bpmn/helpers/Response.php';
 // require 'bpmn/helpers/RequestApi.php';
@@ -36,27 +38,27 @@ class App
     /**
      * Process object
      *
-     * @var string
+     * @var object
      */
-    public $processDefination = '';
+    public $processDefination;
     /**
      * Externel Task object
      *
-     * @var string
+     * @var object
      */
-    public $externelTask = '';
+    public $externelTask;
     /**
      * History object
      *
-     * @var string
+     * @var object
      */
-    public $history = '';
+    public $history;
     /**
      * Process Instance object
      *
-     * @var string
+     * @var object
      */
-    public $processInstance = '';
+    public $processInstance;
     /**
      * Construct function
      *
@@ -73,6 +75,7 @@ class App
         $this->externelTask = new ExternelTaskServices($this->apiUrl);
         $this->history = new HistoryServices($this->apiUrl);
         $this->processInstance = new ProcessInstanceServices($this->apiUrl);
+        $this->variable = new VariablesServices($this->apiUrl);
     }
 }
 

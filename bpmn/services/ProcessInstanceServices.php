@@ -21,11 +21,12 @@ class ProcessInstanceServices extends RequestApi
     public function getProcessVariable($task, $var_name)
     {
         $processVariable = static::get(
-            $this->url('process-instance/'.$task->processInstanceId.'/variables/'.$var_name.'?deserializeValue=true')
+            $this->url('process-instance/'.$task->processInstanceId.'/variables/'.$var_name)
         );
 
         $processVariable['id'] = $task->processInstanceId; 
-        return $this->processInstanceResponse->cast($this->processInstanceResponse, $processVariable);
+        $data = $this->processInstanceResponse->cast($this->processInstanceResponse, $processVariable);
+        return json_decode(json_encode($data), TRUE);
     }
 
     protected function url($path)

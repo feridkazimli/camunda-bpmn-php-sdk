@@ -14,6 +14,7 @@ class ProcessDefinationServices extends RequestApi
 
     public function __construct($apiUrl)
     {
+        echo $this->apiUrl;
         $this->apiUrl = $apiUrl;
         $this->processResponse = new ProcessResponse();
     }

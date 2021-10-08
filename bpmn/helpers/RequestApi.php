@@ -51,7 +51,6 @@ class RequestApi {
         $response = curl_exec($this->ch);
         $code = curl_getinfo($this->ch, CURLINFO_HTTP_CODE);
         curl_close($this->ch);
-        
         $result = json_decode($response, TRUE);
         $result['code'] = $code;
         return $result;
