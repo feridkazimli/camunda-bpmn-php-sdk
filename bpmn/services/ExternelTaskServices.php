@@ -94,6 +94,13 @@ class ExternelTaskServices extends RequestApi
         return $complete;
     }
 
+    public function bpmnError($task_id, Closure $request)
+    {
+        $handle = static::post($this->url('external-task/'.$task_id.'/bpmnError'),
+                                $request->call($this));
+        return $handle;
+    }
+
     public function getTaskVariable($task, $var_name)
     {
         $variable = $this->get(
